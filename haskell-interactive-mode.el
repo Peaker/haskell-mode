@@ -940,17 +940,34 @@ don't care when the thing completes as long as it's soonish."
   'follow-link t
   'help-echo "Click to expand…")
 
+
 (defun haskell-interactive-mode-history-toggle (n)
   "Toggle the history N items up or down."
   (unless (null haskell-interactive-mode-history)
-    (setq haskell-interactive-mode-history-index
-          (mod (+ haskell-interactive-mode-history-index n)
-               (length haskell-interactive-mode-history)))
-    (unless (zerop haskell-interactive-mode-history-index)
-      (message "History item: %d" haskell-interactive-mode-history-index))
-    (haskell-interactive-mode-set-prompt
-     (nth haskell-interactive-mode-history-index
-          haskell-interactive-mode-history))))
+    (let ((original-index haskell-interactive-mode-history-index)
+          (prefix (haskell-interactive-mode-input-partial)))
+      (cl-flet
+        ((match-prefix
+          () (string-prefix-p
+              prefix
+              (nth haskell-interactive-mode-history-index
+                   haskell-interactive-mode-history))))
+        (while
+            (progn
+              (setq haskell-interactive-mode-history-index
+                    (mod (+ haskell-interactive-mode-history-index n)
+                         (length haskell-interactive-mode-history)))
+              (and (not (match-prefix))
+                   (/= original-index haskell-interactive-mode-history-index))))
+        (if (match-prefix)
+            (progn
+              (unless (zerop haskell-interactive-mode-history-index)
+                (message "History item: %d" haskell-interactive-mode-history-index))
+              (haskell-interactive-mode-set-prompt
+               (nth haskell-interactive-mode-history-index
+                    haskell-interactive-mode-history))
+              (goto-char (+ haskell-interactive-mode-prompt-start (length prefix))))
+          (message "Not found: %s" prefix))))))
 
 (defun haskell-interactive-mode-set-prompt (p)
   "Set (and overwrite) the current prompt."
