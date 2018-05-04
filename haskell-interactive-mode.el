@@ -130,9 +130,9 @@ be nil.")
   :group 'haskell-interactive)
 
 ;;;###autoload
-(defface haskell-interactive-face-prompt2
+(defface haskell-interactive-face-prompt-cont
   '((t :inherit font-lock-keyword-face))
-  "Face for the prompt2 in multi-line mode."
+  "Face for the prompt-cont in multi-line mode."
   :group 'haskell-interactive)
 
 ;;;###autoload
@@ -252,12 +252,12 @@ do the
           (lines (split-string expr "\n")))
       (cl-loop for elt on (cdr lines) do
                (setcar elt (replace-regexp-in-string pre "" (car elt))))
-      ;; Temporarily set prompt2 to be empty to avoid unwanted output
-      (concat ":set prompt2 \"\"\n"
+      ;; Temporarily set prompt-cont to be empty to avoid unwanted output
+      (concat ":set prompt-cont \"\"\n"
               ":{\n"
               (mapconcat #'identity lines "\n")
               "\n:}\n"
-              (format ":set prompt2 \"%s\"" haskell-interactive-prompt2)))))
+              (format ":set prompt-cont \"%s\"" haskell-interactive-prompt-cont)))))
 
 (defun haskell-interactive-mode-line-is-query (line)
   "Is LINE actually a :t/:k/:i?"
@@ -321,10 +321,10 @@ SESSION, otherwise operate on the current buffer."
                                  'result t)))
       (save-excursion
         (goto-char (point-max))
-        (when (string= text haskell-interactive-prompt2)
+        (when (string= text haskell-interactive-prompt-cont)
           (setq prop-text
                 (propertize prop-text
-                            'font-lock-face 'haskell-interactive-face-prompt2
+                            'font-lock-face 'haskell-interactive-face-prompt-cont
                             'read-only haskell-interactive-prompt-read-only)))
         (insert (ansi-color-apply prop-text))
         (haskell-interactive-mode-handle-h)

@@ -333,7 +333,7 @@ ambiguous class constraint."
   :type 'string
   :group 'haskell-interactive)
 
-(defcustom haskell-interactive-prompt2 (replace-regexp-in-string
+(defcustom haskell-interactive-prompt-cont (replace-regexp-in-string
                                         "> $"
                                         "| "
                                         haskell-interactive-prompt)
@@ -378,7 +378,7 @@ read-only property."
 
 (defcustom haskell-interactive-prompt-read-only
   haskell-interactive-mode-read-only
-  "Non-nil means the prompt (and prompt2) is read-only."
+  "Non-nil means the prompt (and prompt-cont) is read-only."
   :type 'boolean
   :group 'haskell-interactive)
 
